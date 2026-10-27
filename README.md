@@ -7,7 +7,7 @@ Consola en React + TypeScript para la Guild de Cazarrecompensas (Hackathon Front
 | Nombre | Código |
 |:--|:--|
 | Sergio Rojas | 202XXXXXXX |
-| Valeria Ayala | 202XXXXXXX |
+| Valeria Ayala | 202310180 |
 | Ernesto Corzo | 202310441 |
 
 ## Stack
