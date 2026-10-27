@@ -20,3 +20,92 @@ html {
 body {
   @apply bg-sea-950 text-slate-100 antialiased;
 }
+
+/* El ancho no salta cuando el detalle de una noticia bloquea el scroll del body */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* ---- CP5: historia de una saga ---- */
+
+@keyframes story-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes stage-reveal {
+  from {
+    opacity: 0.15;
+    transform: translateY(3rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Barra de progreso de lectura. Sin soporte, SagaStoryPage la mueve con el evento scroll. */
+.story-progress {
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+@supports (animation-timeline: scroll()) {
+  .story-progress {
+    animation: story-progress linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+/* Con prefers-reduced-motion: reduce no se aplica nada de esto: todo el contenido queda visible y quieto. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .stage-card {
+      animation: stage-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+
+  /* Equivalente sin Scroll-driven Animations: un IntersectionObserver marca data-seen */
+  @supports not (animation-timeline: view()) {
+    .stage-card {
+      opacity: 0.15;
+      transform: translateY(3rem);
+      transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+    }
+    .stage-card[data-seen='true'] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .story-root {
+    transition:
+      background-color 0.6s ease,
+      color 0.6s ease;
+  }
+  .story-ship {
+    transition: transform 0.8s ease-in-out;
+  }
+  .story-route-seg {
+    transition: stroke-dashoffset 0.8s ease-in-out;
+  }
+  .story-bar {
+    transition: width 0.4s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

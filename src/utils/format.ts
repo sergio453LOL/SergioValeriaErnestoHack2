@@ -1,4 +1,13 @@
-import type { CrewRole, FruitFilter, WantedSort, WantedStatus } from '../api/types';
+import type {
+  CrewRole,
+  FruitFilter,
+  NewsPriority,
+  NewsStatus,
+  NewsType,
+  StageMetric,
+  WantedSort,
+  WantedStatus,
+} from '../api/types';
 
 const numberFormat = new Intl.NumberFormat('es-PE');
 const dateFormat = new Intl.DateTimeFormat('es-PE', { dateStyle: 'medium' });
@@ -53,3 +62,32 @@ export const ROLE_LABELS: Record<CrewRole, string> = {
   HELMSMAN: 'Timonel',
   FIGHTER: 'Combatiente',
 };
+
+export const NEWS_TYPE_LABELS: Record<NewsType, string> = {
+  BOUNTY_UPDATE: 'Recompensas',
+  BATTLE: 'Batalla',
+  MARINE_OPERATION: 'Operación de la Marina',
+  WORLD_GOVERNMENT: 'Gobierno Mundial',
+  DISCOVERY: 'Descubrimiento',
+};
+
+export const NEWS_PRIORITY_LABELS: Record<NewsPriority, string> = {
+  LOW: 'Baja',
+  MEDIUM: 'Media',
+  HIGH: 'Alta',
+  CRITICAL: 'Crítica',
+};
+
+export const NEWS_STATUS_LABELS: Record<NewsStatus, string> = {
+  RUMOR: 'Rumor',
+  CONFIRMED: 'Confirmada',
+  DEBUNKED: 'Desmentida',
+};
+
+// El valor de una métrica de etapa con su unidad, tal como llega del servidor.
+export function formatMetric(metric: StageMetric): string {
+  if (metric.unit === 'berries') return formatBerries(metric.value);
+  if (metric.unit === '%') return `${formatNumber(metric.value)} %`;
+  if (metric.unit.startsWith('/')) return `${formatNumber(metric.value)}${metric.unit}`;
+  return `${formatNumber(metric.value)} ${metric.unit}`;
+}

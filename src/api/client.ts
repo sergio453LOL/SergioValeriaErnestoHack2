@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import type { ApiErrorBody, FieldError } from './types';
+import type { ApiErrorBody, FieldError, NewsDetail } from './types';
 
 const TOKEN_KEY = 'logpose.token';
 
@@ -56,13 +56,21 @@ export class ApiError extends Error {
   status: number;
   code: string;
   details: FieldError[];
+  // Solo en 409 NEWS_ALREADY_VERIFIED: la noticia tal como está ahora en el servidor.
+  current: NewsDetail | null;
 
-  constructor(status: number, code: string, message: string, details: FieldError[] = []) {
+  constructor(status: number, code: string, message: string, details: FieldError[] = [], current: NewsDetail | null = null) {
     super(message);
     this.status = status;
     this.code = code;
     this.details = details;
+    this.current = current;
   }
+}
+
+// 423: endpoint del Grand Line sin Log Pose. El bloqueo lo aplica el servidor; solo lo mostramos.
+export function isLogPoseLocked(error: ApiError): boolean {
+  return error.status === 423 || error.code === 'LOG_POSE_REQUIRED';
 }
 
 function isApiErrorBody(value: unknown): value is ApiErrorBody {
@@ -79,7 +87,7 @@ export function toApiError(error: unknown): ApiError {
   if (error instanceof AxiosError) {
     const body: unknown = error.response?.data;
     if (error.response && isApiErrorBody(body)) {
-      return new ApiError(error.response.status, body.code, body.message, body.details ?? []);
+      return new ApiError(error.response.status, body.code, body.message, body.details ?? [], body.current ?? null);
     }
     if (error.response) {
       return new ApiError(error.response.status, 'HTTP_ERROR', `El servidor respondió ${error.response.status}.`);

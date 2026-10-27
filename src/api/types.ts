@@ -138,6 +138,98 @@ export interface LogPose {
   message: string;
 }
 
+// ---- Grand Line: noticias ----
+
+export type NewsType = 'BOUNTY_UPDATE' | 'BATTLE' | 'MARINE_OPERATION' | 'WORLD_GOVERNMENT' | 'DISCOVERY';
+export type NewsPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type NewsStatus = 'RUMOR' | 'CONFIRMED' | 'DEBUNKED';
+export type NewsVerdict = 'CONFIRMED' | 'DEBUNKED';
+
+export interface NewsItem {
+  id: string;
+  type: NewsType;
+  priority: NewsPriority;
+  status: NewsStatus;
+  title: string;
+  summary: string;
+  source: string;
+  island: string;
+  relatedWanted: { id: string; name: string } | null;
+  publishedAt: string;
+  updatedAt: string;
+  verifiedAt: string | null;
+}
+
+export interface NewsDetail extends NewsItem {
+  body: string[];
+}
+
+export interface NewsFilters {
+  type?: NewsType;
+  priority?: NewsPriority;
+  status?: NewsStatus;
+}
+
+export interface NewsFeedQuery extends NewsFilters {
+  cursor?: string;
+  limit: number;
+}
+
+export interface NewsFeed {
+  items: NewsItem[];
+  nextCursor: string | null;
+  hasMore: boolean;
+}
+
+// ---- Grand Line: sagas ----
+
+export interface Palette {
+  background: string;
+  surface: string;
+  primary: string;
+  accent: string;
+  text: string;
+}
+
+export interface SagaSummary {
+  id: string;
+  order: number;
+  title: string;
+  subtitle: string;
+  synopsis: string;
+  stageCount: number;
+  totalDistanceNm: number;
+  firstIsland: string;
+  lastIsland: string;
+  palette: Palette;
+}
+
+export type StageMetricKey = 'distanceNm' | 'crewMorale' | 'bountyPool' | 'marineThreat';
+
+export interface StageMetric {
+  key: StageMetricKey;
+  label: string;
+  value: number;
+  unit: string;
+}
+
+export interface SagaStage {
+  id: string;
+  order: number;
+  slug: string;
+  title: string;
+  narrative: string[];
+  island: { id: string; name: string; x: number; y: number };
+  palette: Palette;
+  metrics: StageMetric[];
+}
+
+export interface SagaStory {
+  saga: SagaSummary & { intro: string };
+  map: { width: number; height: number };
+  stages: SagaStage[];
+}
+
 export interface FieldError {
   field: string;
   message: string;
@@ -150,4 +242,5 @@ export interface ApiErrorBody {
   traceId: string;
   details?: FieldError[];
   retryAfterSeconds?: number;
+  current?: NewsDetail;
 }

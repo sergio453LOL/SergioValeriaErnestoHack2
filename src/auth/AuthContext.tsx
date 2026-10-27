@@ -3,6 +3,13 @@ import { ApiError, clearToken, getToken, setToken, setUnauthorizedHandler, toApi
 import * as endpoints from '../api/endpoints';
 import type { LoginRequest, LoginResponse, RegisterRequest, Team, User } from '../api/types';
 import { clearWantedCache } from '../pages/wanted/wantedCache';
+import { clearNewsCache } from '../pages/news/newsStore';
+
+// Cada tripulación tiene su workspace: al cambiar de sesión no se reutiliza nada en memoria.
+function clearCaches(): void {
+  clearWantedCache();
+  clearNewsCache();
+}
 
 export type AuthState =
   | { status: 'checking' }
@@ -54,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Cualquier 401 de la API (token vencido o revocado) devuelve al login.
   useEffect(() => {
     setUnauthorizedHandler(() => {
-      clearWantedCache();
+      clearCaches();
       setState({ status: 'anonymous', expired: true });
     });
     return () => setUnauthorizedHandler(null);
@@ -67,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const delay = Math.min(Math.max(new Date(expiresAt).getTime() - Date.now(), 0), MAX_TIMEOUT);
     const timer = window.setTimeout(() => {
       clearToken();
-      clearWantedCache();
+      clearCaches();
       setState({ status: 'anonymous', expired: true });
     }, delay);
     return () => window.clearTimeout(timer);
@@ -75,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const startSession = useCallback((response: LoginResponse) => {
     setToken(response.token);
-    clearWantedCache();
+    clearCaches();
     setState({ status: 'authenticated', user: response.user, team: response.team, expiresAt: response.expiresAt });
   }, []);
 
@@ -103,7 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     clearToken();
-    clearWantedCache();
+    clearCaches();
     setState({ status: 'anonymous', expired: false });
   }, []);
 

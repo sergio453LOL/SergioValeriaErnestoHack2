@@ -5,6 +5,10 @@ import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import RegisterPage from './pages/RegisterPage';
+import NewsDetailModal from './pages/news/NewsDetailModal';
+import NewsFeedPage from './pages/news/NewsFeedPage';
+import SagaStoryPage from './pages/sagas/SagaStoryPage';
+import SagasPage from './pages/sagas/SagasPage';
 import WantedDetailPage from './pages/wanted/WantedDetailPage';
 import WantedListPage from './pages/wanted/WantedListPage';
 
@@ -38,6 +42,14 @@ export const router = createBrowserRouter([
               { path: '/', element: <DashboardPage /> },
               { path: '/wanted', element: <WantedListPage /> },
               { path: '/wanted/:id', element: <WantedDetailPage /> },
+              {
+                path: '/news',
+                element: <NewsFeedPage />,
+                // El detalle es una ruta hija: se abre encima del feed, que sigue montado.
+                children: [{ path: ':id', element: <NewsDetailModal /> }],
+              },
+              { path: '/sagas', element: <SagasPage /> },
+              { path: '/sagas/:id', element: <SagaStoryPage /> },
             ],
           },
         ],
