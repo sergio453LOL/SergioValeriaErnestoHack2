@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sea-950: #06111f;
+  --color-sea-900: #0b1d33;
+  --color-sea-800: #12304f;
+  --color-sea-700: #1b4469;
+  --color-parchment: #f3e6c4;
+  --color-parchment-dark: #e2cf9f;
+  --color-ink: #3b2a1a;
+  --color-gold: #e9c46a;
+  --color-coral: #e76f51;
+  --font-display: Georgia, "Times New Roman", serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-sea-950 text-slate-100 antialiased;
+}
